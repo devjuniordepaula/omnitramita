@@ -1,0 +1,47 @@
+# Passo 1: O Controlador (Dashboard de Métricas)
+
+Vamos focar no primeiro pilar da nossa sessão de brainstorming: **O Controlador**. Este é o topo do dashboard, o local onde o usuário terá um resumo instantâneo da saúde do seu setor.
+
+Para atender aos requisitos de alta usabilidade e prazer visual (@ui/ux), criaremos uma interface "clean", inspirada em painéis modernos (Bento Grid / Card Layout), usando as tecnologias já disponíveis no projeto (Tailwind CSS v4, Lucide React e Radix/Shadcn).
+
+## User Review Required
+> [!IMPORTANT]
+> Preciso da sua aprovação para criar as rotas do dashboard e gerar o layout visual inicial. Dê uma olhada na proposta abaixo.
+
+## Proposed Changes
+
+### 1. Estrutura de Rotas (Next.js App Router)
+Vamos criar uma área "protegida" para o sistema pós-login:
+- `app/(dashboard)/layout.tsx`: O esqueleto da aplicação, que conterá a navegação lateral (Sidebar) e o cabeçalho de boas-vindas.
+- `app/(dashboard)/page.tsx`: A tela inicial do dashboard em si.
+
+### 2. Design e UI/UX (O Controlador)
+Na `page.tsx`, vamos implementar o topo da tela com os seguintes **Cards Estatísticos (KPIs)**:
+1. **Caixa de Entrada (A Triar):** Quantidade de documentos novos. Cor neutra/primária (Azul ou Índigo). Ícone: `Inbox`.
+2. **Alertas e Prazos (Urgências):** Documentos com prazo vencendo. Cor de alerta sutil (Vermelho/Laranja suave). Ícone: `AlertTriangle` ou `Clock`.
+3. **Eficiência (Despachados Hoje):** Quantos processos fluíram. Cor de sucesso (Verde/Esmeralda). Ícone: `CheckCircle` ou `Send`.
+4. **Gargalo Atual:** Onde está a maior fila do setor neste momento (ex: "5 doc. aguardando assinatura"). Ícone: `TrendingDown` ou `Hourglass`.
+
+*Detalhes de UX:*
+- Usaremos tipografia clara (fonte Inter/Geist padrão do Tailwind).
+- Efeitos "Glassmorphism" ou sombras suaves (`shadow-sm` para `shadow-md` no hover) para indicar interatividade.
+- Animações de entrada suaves (fade-in e slide-up) para tornar o carregamento mais fluído e profissional.
+
+### Arquivos Modificados/Criados
+
+#### [NEW] app/(dashboard)/layout.tsx
+Estrutura base (sidebar e header). Inicialmente um mockup para posicionar o dashboard.
+
+#### [NEW] app/(dashboard)/page.tsx
+A página que renderizará o grid de KPIs ("O Controlador").
+
+#### [NEW] components/dashboard/stat-card.tsx
+Um componente reutilizável para renderizar cada card de métrica, garantindo consistência visual.
+
+## Verification Plan
+1. Após a implementação, rodaremos o servidor de desenvolvimento.
+2. Acessaremos a rota `/` (que no momento pode redirecionar para `/dashboard` ou podemos acessar `/dashboard` diretamente).
+3. Avaliaremos se o layout reflete uma estética "premium" e se as métricas estão claras.
+
+---
+**Se você aprovar este plano para o Passo 1, começarei a codificar imediatamente!**
