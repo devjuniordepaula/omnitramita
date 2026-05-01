@@ -43,7 +43,7 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true)
     setErrorMsg(null)
-    
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -87,9 +87,9 @@ export default function LoginPage() {
             </div>
           )}
 
-          <Button 
-            variant="outline" 
-            className="w-full h-11 bg-white hover:bg-slate-50 text-slate-700 font-medium border-slate-200" 
+          <Button
+            variant="outline"
+            className="w-full h-11 bg-white hover:bg-slate-50 text-slate-700 font-medium border-slate-200"
             onClick={handleGoogleLogin}
             disabled={googleLoading || loading}
           >

@@ -51,12 +51,12 @@ export function ActivityFeed() {
   return (
     <div className="w-full">
       <h3 className="text-lg font-semibold text-slate-800 mb-4">Atividades Recentes</h3>
-      
+
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
         <div className="relative">
           {/* Linha vertical da timeline */}
           <div className="absolute left-4 top-2 bottom-2 w-px bg-slate-200"></div>
-          
+
           <div className="space-y-6">
             {activities.map((activity, index) => {
               const Icon = activity.icon
@@ -66,7 +66,7 @@ export function ActivityFeed() {
                   <div className={`absolute left-0 top-0.5 w-8 h-8 rounded-full ${activity.bgColor} border-2 border-white flex items-center justify-center z-10`}>
                     <Icon className={`w-4 h-4 ${activity.iconColor}`} />
                   </div>
-                  
+
                   {/* Conteúdo */}
                   <div>
                     <p className="text-sm text-slate-800">
@@ -85,7 +85,7 @@ export function ActivityFeed() {
             })}
           </div>
         </div>
-        
+
         <button className="w-full mt-6 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
           Ver todo o histórico
         </button>

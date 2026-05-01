@@ -41,12 +41,12 @@ export function KanbanCard({ document }: KanbanCardProps) {
       <div className={`bg-white rounded-lg p-4 shadow-sm border border-slate-200 border-l-4 ${priorityColors[document.priority]} hover:shadow-md transition-shadow relative group`}>
         <div className="flex justify-between items-start mb-2">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{document.type}</span>
-          
+
           <div className="flex items-center gap-2">
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${badgeColors[document.priority]}`}>
               {document.priority}
             </span>
-            
+
             {/* Menu de Ações (Acessível via Dropdown nativo) */}
             <details className="relative z-10">
               <summary className="list-none cursor-pointer p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
@@ -54,7 +54,7 @@ export function KanbanCard({ document }: KanbanCardProps) {
               </summary>
               {/* O Dropdown */}
               <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-slate-200 py-1 z-20">
-                <button 
+                <button
                   onClick={(e) => {
                     e.preventDefault();
                     setIsModalOpen(true);
@@ -77,9 +77,9 @@ export function KanbanCard({ document }: KanbanCardProps) {
             </details>
           </div>
         </div>
-        
+
         <h4 className="text-sm font-semibold text-slate-800 mb-3 pr-6">{document.title}</h4>
-        
+
         <div className="flex items-center justify-between text-xs text-slate-500">
           <div className="flex items-center">
             {document.assignee ? (
@@ -93,7 +93,7 @@ export function KanbanCard({ document }: KanbanCardProps) {
               <span className="italic text-slate-400">Não atribuído</span>
             )}
           </div>
-          
+
           <div className="flex items-center gap-1" title={`${document.daysInStage} dias nesta etapa`}>
             {document.daysInStage > 5 ? (
               <AlertCircle className="w-3.5 h-3.5 text-red-500" />
@@ -108,10 +108,10 @@ export function KanbanCard({ document }: KanbanCardProps) {
       </div>
 
       {/* Renderização condicional do Radar de Rastreabilidade */}
-      <TraceabilityModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        document={document} 
+      <TraceabilityModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        document={document}
       />
     </>
   )

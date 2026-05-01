@@ -42,17 +42,17 @@ export default function ProcessosPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        
+
         {/* Barra de Ferramentas */}
         <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50">
-          
+
           {/* Busca e Filtro */}
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
-              <input 
-                type="text" 
-                placeholder="Buscar processo..." 
+              <input
+                type="text"
+                placeholder="Buscar processo..."
                 className="pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64"
               />
             </div>
@@ -92,8 +92,8 @@ export default function ProcessosPage() {
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-600">
               <tr>
                 <th className="p-4 w-12 text-center">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     checked={selectedIds.length === tableData.length && tableData.length > 0}
                     onChange={toggleSelectAll}
                     className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
@@ -108,13 +108,13 @@ export default function ProcessosPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {tableData.map((row) => (
-                <tr 
-                  key={row.id} 
+                <tr
+                  key={row.id}
                   className={`hover:bg-slate-50 transition-colors ${selectedIds.includes(row.id) ? 'bg-blue-50/50' : ''}`}
                 >
                   <td className="p-4 text-center">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       checked={selectedIds.includes(row.id)}
                       onChange={() => toggleSelect(row.id)}
                       className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
@@ -130,9 +130,9 @@ export default function ProcessosPage() {
                   <td className="p-4 text-slate-600">{row.date}</td>
                   <td className="p-4">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold
-                      ${row.priority === 'Urgente' ? 'bg-red-50 text-red-700' : 
-                        row.priority === 'Alta' ? 'bg-amber-50 text-amber-700' : 
-                        row.priority === 'Normal' ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'}`}
+                      ${row.priority === 'Urgente' ? 'bg-red-50 text-red-700' :
+                        row.priority === 'Alta' ? 'bg-amber-50 text-amber-700' :
+                          row.priority === 'Normal' ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'}`}
                     >
                       {row.priority}
                     </span>
@@ -142,7 +142,7 @@ export default function ProcessosPage() {
             </tbody>
           </table>
         </div>
-        
+
         {/* Paginação Mockup */}
         <div className="p-4 border-t border-slate-200 flex items-center justify-between text-sm text-slate-500 bg-white">
           <span>Mostrando 1 a 6 de 12 resultados</span>

@@ -34,7 +34,7 @@ export default async function DashboardLayout({
             <p className="text-[10px] text-slate-500 font-medium tracking-wide uppercase">Gestão de Documentos</p>
           </div>
         </div>
-        
+
         <nav className="mt-6 px-4 space-y-1">
           <a href="/" className="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-blue-50 text-blue-700">
             <LayoutDashboard className="h-5 w-5 mr-3" />

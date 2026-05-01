@@ -43,13 +43,12 @@ export function StatCard({
         )}
         {trendValue && (
           <p
-            className={`text-xs mt-1 font-medium flex items-center ${
-              trend === "up"
+            className={`text-xs mt-1 font-medium flex items-center ${trend === "up"
                 ? "text-emerald-500"
                 : trend === "down"
-                ? "text-red-500"
-                : "text-muted-foreground"
-            }`}
+                  ? "text-red-500"
+                  : "text-muted-foreground"
+              }`}
           >
             {trend === "up" ? "↑ " : trend === "down" ? "↓ " : ""}
             {trendValue}

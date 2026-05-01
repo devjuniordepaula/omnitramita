@@ -26,10 +26,10 @@ export function KanbanBoard() {
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-slate-800">Fluxo de Trabalho (Kanban)</h3>
       </div>
-      
+
       {/* Contêiner com rolagem horizontal para telas menores */}
       <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0">
-        
+
         {/* Coluna 1: A Distribuir */}
         <div className="flex-shrink-0 w-80 flex flex-col bg-slate-100/50 rounded-xl border border-slate-200">
           <div className="p-4 border-b border-slate-200 flex items-center justify-between">
