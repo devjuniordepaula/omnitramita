@@ -6,20 +6,39 @@ import { OrganogramaTree } from '@/components/organizacao/organograma-tree'
 import type { Orgao, Departamento, Setor } from '@/lib/types'
 
 export default async function OrganizacaoPage() {
+  console.log('OrganizacaoPage: Iniciando busca de perfil')
   const profile = await getProfile()
-  if (!profile?.is_gestor) redirect('/')
+  console.log('OrganizacaoPage: Perfil encontrado:', profile?.nome_completo, 'is_gestor:', profile?.is_gestor)
+  
+  if (!profile?.is_gestor) {
+    console.log('OrganizacaoPage: Usuário não é gestor, redirecionando...')
+    redirect('/')
+  }
 
+  console.log('OrganizacaoPage: Criando cliente Supabase')
   const supabase = await createClient()
 
+  console.log('OrganizacaoPage: Buscando órgãos, departamentos e setores (sem joins)...')
   const [orgaosRes, departamentosRes, setoresRes] = await Promise.all([
     supabase.from('orgaos').select('*').order('nome'),
-    supabase.from('departamentos').select('*, orgaos(nome)').order('nome'),
-    supabase.from('setores').select('*, departamentos(nome, orgao_id)').order('nome'),
+    supabase.from('departamentos').select('*').order('nome'),
+    supabase.from('setores').select('*').order('nome'),
   ])
+
+  console.log('OrganizacaoPage: Dados recebidos')
+  if (orgaosRes.error) console.error('Erro órgãos:', orgaosRes.error)
+  if (departamentosRes.error) console.error('Erro departamentos:', departamentosRes.error)
+  if (setoresRes.error) console.error('Erro setores:', setoresRes.error)
 
   const orgaos = (orgaosRes.data ?? []) as Orgao[]
   const departamentos = (departamentosRes.data ?? []) as (Departamento & { orgaos?: { nome: string } })[]
   const setores = (setoresRes.data ?? []) as (Setor & { departamentos?: { nome: string; orgao_id: string } })[]
+
+  console.log('OrganizacaoPage: Renderizando com:', { 
+    orgaos: orgaos.length, 
+    departamentos: departamentos.length, 
+    setores: setores.length 
+  })
 
   return (
     <div className="space-y-8">
