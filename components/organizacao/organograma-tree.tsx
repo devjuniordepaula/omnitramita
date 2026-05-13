@@ -23,7 +23,11 @@ interface OrganogramaTreeProps {
   setores: (Setor & { departamentos?: { nome: string; orgao_id: string } })[]
 }
 
-export function OrganogramaTree({ orgaos, departamentos, setores }: OrganogramaTreeProps) {
+export function OrganogramaTree({ 
+  orgaos = [], 
+  departamentos = [], 
+  setores = [] 
+}: OrganogramaTreeProps) {
   const [isPending, startTransition] = useTransition()
   const [openOrgaos, setOpenOrgaos] = useState<Record<string, boolean>>({})
   const [openDepts, setOpenDepts] = useState<Record<string, boolean>>({})

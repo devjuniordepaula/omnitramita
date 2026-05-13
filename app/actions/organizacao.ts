@@ -58,6 +58,40 @@ export async function createOrgao(formData: FormData) {
   return { success: true }
 }
 
+export async function updateOrgao(id: string, formData: FormData) {
+  await requireGestor()
+  const supabase = await createClient()
+
+  const raw = {
+    nome: formData.get('nome') as string,
+    cnpj: formData.get('cnpj') as string || undefined,
+    cidade: formData.get('cidade') as string || undefined,
+    estado: formData.get('estado') as string || undefined,
+  }
+
+  const parsed = OrgaoSchema.safeParse(raw)
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message }
+  }
+
+  const { error } = await supabase.from('orgaos').update(parsed.data).eq('id', id)
+  if (error) return { error: error.message }
+
+  revalidatePath('/organizacao')
+  return { success: true }
+}
+
+export async function deleteOrgao(id: string) {
+  await requireGestor()
+  const supabase = await createClient()
+
+  const { error } = await supabase.from('orgaos').delete().eq('id', id)
+  if (error) return { error: error.message }
+
+  revalidatePath('/organizacao')
+  return { success: true }
+}
+
 // ─── DEPARTAMENTO ─────────────────────────────────────────────────
 export async function createDepartamento(formData: FormData) {
   await requireGestor()
