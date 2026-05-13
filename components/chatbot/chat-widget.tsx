@@ -1,22 +1,39 @@
 "use client"
 
-import { useChat } from "ai/react"
+import { useChat } from "@ai-sdk/react"
 import { useState } from "react"
 import { MessageCircle, X, SendHorizontal, Bot, User } from "lucide-react"
+
+import { DefaultChatTransport, UIMessage } from "ai"
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: "/api/chat",
-    initialMessages: [
+  const [input, setInput] = useState("")
+  
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
+    messages: [
       {
         id: "1",
         role: "assistant",
-        content: "Olá! Sou a Omni, a assistente virtual do OmniTramita. Como posso te ajudar com a sua solicitação hoje?"
-      }
+        parts: [{ type: "text", text: "Olá! Sou a Omni, a assistente virtual do OmniTramita. Como posso te ajudar com a sua solicitação hoje?" }]
+      } as UIMessage
     ]
   })
+
+  const isLoading = status === "submitted" || status === "streaming"
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value)
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!input.trim() || isLoading) return
+    sendMessage({ text: input })
+    setInput("")
+  }
 
   return (
     <>
@@ -65,7 +82,7 @@ export function ChatWidget() {
                   {m.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                 </div>
                 <div className={`p-3 rounded-2xl text-sm ${m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-sm' : 'bg-white shadow-sm border border-slate-100 rounded-tl-sm text-slate-700'}`}>
-                  {m.content}
+                  {m.parts.map((p, i) => p.type === 'text' ? <span key={i}>{p.text}</span> : null)}
                 </div>
               </div>
             ))}

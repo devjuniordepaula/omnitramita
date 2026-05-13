@@ -23,5 +23,5 @@ Regras:
 - Responda de forma concisa e utilize formatação em negrito para destacar partes importantes.`,
   })
 
-  return result.toDataStreamResponse()
+  return result.toTextStreamResponse()
 }
