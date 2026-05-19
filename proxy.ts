@@ -29,28 +29,51 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  // Não remova esta linha — ela atualiza/renova a sessão do utilizador
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Proteger rotas privadas: redireciona para /login se não autenticado
-  const isAuthRoute =
-    request.nextUrl.pathname.startsWith('/login') ||
-    request.nextUrl.pathname.startsWith('/register') ||
-    request.nextUrl.pathname.startsWith('/auth')
+  const pathname = request.nextUrl.pathname
 
-  if (!user && !isAuthRoute) {
+  // Rotas públicas — sem login necessário
+  const isPublicRoute =
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/register') ||
+    pathname.startsWith('/auth') ||
+    pathname.startsWith('/solicitar') ||
+    pathname.startsWith('/rastrear')
+
+  // Sem sessão tentando acessar rota privada → login
+  if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
-  // Se já está logado e tenta aceder ao login/register, redireciona para /
-  if (user && (request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register'))) {
+  // Já logado tentando acessar login/register → dashboard
+  if (user && (pathname.startsWith('/login') || pathname.startsWith('/register'))) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     return NextResponse.redirect(url)
+  }
+
+  // Rotas exclusivas do Gestor Master
+  const isGestorRoute =
+    pathname.startsWith('/usuarios') ||
+    pathname.startsWith('/organizacao')
+
+  if (user && isGestorRoute) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_gestor')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.is_gestor) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
   }
 
   return supabaseResponse
@@ -58,12 +81,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Aplica o proxy em todas as rotas excepto:
-     * - _next/static (ficheiros estáticos)
-     * - _next/image (optimização de imagens)
-     * - favicon.ico e ficheiros de imagem
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webop)$).*)',
   ],
 }
