@@ -2,3 +2,14 @@
 [2026-05-19T00:50:51.633Z] getProfile: Buscando usuário auth
 [2026-05-19T00:50:51.669Z] getProfile: Buscando perfil para 900a0b04-0fc5-4209-9e30-bbe5a4e66ec2
 [2026-05-19T00:50:51.953Z] getProfile: Erro ou dados vazios: {"code":"PGRST205","details":null,"hint":null,"message":"Could not find the table 'public.profiles' in the schema cache"}
+[2026-05-20T00:46:46.100Z] getProfile: Iniciando
+[2026-05-20T00:46:46.103Z] getProfile: Buscando usuário auth
+[2026-05-20T00:46:46.304Z] getProfile: Buscando perfil para 900a0b04-0fc5-4209-9e30-bbe5a4e66ec2
+[2026-05-20T00:46:46.668Z] getProfile: Erro ou dados vazios: {"code":"PGRST205","details":null,"hint":null,"message":"Could not find the table 'public.profiles' in the schema cache"}
+[2026-05-20T00:55:41.753Z] getProfile: Iniciando
+[2026-05-20T00:55:41.758Z] getProfile: Buscando usuário auth
+[2026-05-20T00:55:41.763Z] getProfile: Buscando perfil para 900a0b04-0fc5-4209-9e30-bbe5a4e66ec2
+[2026-05-20T00:55:42.045Z] getProfile: Erro ou dados vazios: {"code":"PGRST205","details":null,"hint":null,"message":"Could not find the table 'public.profiles' in the schema cache"}
+[2026-05-20T01:10:45.187Z] getProfile: Iniciando
+[2026-05-20T01:10:45.257Z] getProfile: Iniciando
+[2026-05-20T01:10:45.344Z] getProfile: Iniciando
