@@ -1,9 +1,38 @@
+import { createClient } from '@/utils/supabase/server'
 import { StatCard } from "@/components/dashboard/stat-card"
 import { KanbanBoard } from "@/components/dashboard/kanban-board"
 import { ActivityFeed } from "@/components/dashboard/activity-feed"
 import { Inbox, AlertTriangle, Send, Hourglass } from "lucide-react"
 
-export default function DashboardPage() {
+async function getDashboardData() {
+  const supabase = await createClient()
+
+  const [
+    { count: totalDistribuir },
+    { count: totalAnalise },
+    { count: totalDespachados },
+    { count: totalAssinatura },
+    { data: recentEvents },
+  ] = await Promise.all([
+    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('status', 'distribuir'),
+    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('status', 'analise'),
+    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('status', 'despachado'),
+    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('status', 'assinatura'),
+    supabase.from('process_events').select('id, user_name, from_status, to_status, observation, created_at, document_id, documents(title)').order('created_at', { ascending: false }).limit(8),
+  ])
+
+  return {
+    totalDistribuir: totalDistribuir ?? 0,
+    totalAnalise: totalAnalise ?? 0,
+    totalDespachados: totalDespachados ?? 0,
+    totalAssinatura: totalAssinatura ?? 0,
+    recentEvents: recentEvents ?? [],
+  }
+}
+
+export default async function DashboardPage() {
+  const { totalDistribuir, totalAnalise, totalDespachados, totalAssinatura, recentEvents } = await getDashboardData()
+
   return (
     <div className="space-y-6">
       <div>
@@ -12,52 +41,18 @@ export default function DashboardPage() {
           Acompanhe o fluxo de documentos e identifique gargalos em tempo real.
         </p>
       </div>
-
-      {/* Grid de KPIs - "O Controlador" */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title="Caixa de Entrada (A Triar)"
-          value={12}
-          description="Documentos aguardando análise"
-          icon={Inbox}
-          colorVariant="default"
-          trend="up"
-          trendValue="+3 desde ontem"
-        />
-        <StatCard
-          title="Alertas e Prazos"
-          value={3}
-          description="Processos com SLA estourando"
-          icon={AlertTriangle}
-          colorVariant="danger"
-          trend="up"
-          trendValue="Vencem hoje"
-        />
-        <StatCard
-          title="Despachados Hoje"
-          value={24}
-          description="Volume de saída do setor"
-          icon={Send}
-          colorVariant="success"
-          trend="up"
-          trendValue="+12% que a média"
-        />
-        <StatCard
-          title="Maior Gargalo"
-          value="Assinatura"
-          description="8 doc. aguardando Diretor"
-          icon={Hourglass}
-          colorVariant="warning"
-        />
+        <StatCard title="A Distribuir" value={totalDistribuir} description="Documentos aguardando triagem" icon={Inbox} colorVariant="default" />
+        <StatCard title="Em Análise" value={totalAnalise} description="Documentos em andamento" icon={Hourglass} colorVariant="warning" />
+        <StatCard title="Aguardando Assinatura" value={totalAssinatura} description="Pendentes de aprovação" icon={AlertTriangle} colorVariant="danger" />
+        <StatCard title="Despachados" value={totalDespachados} description="Processos concluídos" icon={Send} colorVariant="success" />
       </div>
-
-      {/* Kanban e Atividades - "O Gerenciador" e "Mapeador" */}
       <div className="grid gap-4 md:grid-cols-1 xl:grid-cols-4 mt-8">
         <div className="col-span-1 xl:col-span-3 overflow-hidden">
           <KanbanBoard />
         </div>
         <div className="col-span-1 xl:col-span-1 mt-6">
-          <ActivityFeed />
+          <ActivityFeed events={recentEvents} />
         </div>
       </div>
     </div>
