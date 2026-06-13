@@ -50,9 +50,13 @@ export async function createUsuarioInterno(formData: FormData) {
     return { error: parsed.error.issues[0].message }
   }
 
-  const { email, nome_completo, cargo, matricula, orgao_id, is_gestor, can_view, can_dispatch, can_sign, setor_ids: setores } = parsed.data
+  const {
+    email, nome_completo, cargo, matricula,
+    orgao_id, is_gestor, can_view, can_dispatch,
+    can_sign, setor_ids: setores
+  } = parsed.data
 
-  // Criar usuário no Supabase Auth (envia e-mail de convite automaticamente)
+  // Criar usuário no Supabase Auth
   const { data: authData, error: authError } = await supabase.auth.admin.createUser({
     email,
     email_confirm: true,
@@ -63,15 +67,17 @@ export async function createUsuarioInterno(formData: FormData) {
   })
 
   if (authError || !authData.user) {
-    return { error: authError?.message ?? 'Erro ao criar usuário no sistema de autenticação.' }
+    return { error: authError?.message ?? 'Erro ao criar usuário.' }
   }
 
   const userId = authData.user.id
 
-  // Inserir/atualizar o profile (o trigger cria um básico; atualizamos com dados completos)
+  // Upsert do profile com todas as colunas corretas
   const { error: profileError } = await supabase.from('profiles').upsert({
     id: userId,
+    full_name: nome_completo,
     nome_completo,
+    email,
     cargo,
     matricula,
     orgao_id,
@@ -84,10 +90,15 @@ export async function createUsuarioInterno(formData: FormData) {
 
   if (profileError) return { error: profileError.message }
 
-  // Vincular setores (N:N)
+  // Vincular setores
   if (setores.length > 0) {
-    const profileSetores = setores.map((setor_id) => ({ profile_id: userId, setor_id }))
-    const { error: setorError } = await supabase.from('profile_setores').insert(profileSetores)
+    const profileSetores = setores.map((setor_id) => ({
+      profile_id: userId,
+      setor_id
+    }))
+    const { error: setorError } = await supabase
+      .from('profile_setores')
+      .insert(profileSetores)
     if (setorError) return { error: setorError.message }
   }
 
@@ -101,8 +112,11 @@ export async function updateUsuarioInterno(userId: string, formData: FormData) {
 
   const setor_ids = formData.getAll('setor_ids') as string[]
 
+  const nome_completo = formData.get('nome_completo') as string
+
   const updates = {
-    nome_completo: formData.get('nome_completo') as string,
+    full_name: nome_completo,
+    nome_completo,
     cargo: formData.get('cargo') as string || undefined,
     matricula: formData.get('matricula') as string || undefined,
     orgao_id: formData.get('orgao_id') as string,
@@ -112,15 +126,24 @@ export async function updateUsuarioInterno(userId: string, formData: FormData) {
     can_sign: formData.get('can_sign') === 'true',
   }
 
-  const { error: profileError } = await supabase.from('profiles').update(updates).eq('id', userId)
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update(updates)
+    .eq('id', userId)
+
   if (profileError) return { error: profileError.message }
 
-  // Substituir associações de setor
+  // Substituir setores
   await supabase.from('profile_setores').delete().eq('profile_id', userId)
 
   if (setor_ids.length > 0) {
-    const profileSetores = setor_ids.map((setor_id) => ({ profile_id: userId, setor_id }))
-    const { error: setorError } = await supabase.from('profile_setores').insert(profileSetores)
+    const profileSetores = setor_ids.map((setor_id) => ({
+      profile_id: userId,
+      setor_id
+    }))
+    const { error: setorError } = await supabase
+      .from('profile_setores')
+      .insert(profileSetores)
     if (setorError) return { error: setorError.message }
   }
 
@@ -133,7 +156,11 @@ export async function toggleUsuarioAtivo(userId: string, ativo: boolean) {
   await requireGestor()
   const supabase = await createClient()
 
-  const { error } = await supabase.from('profiles').update({ ativo }).eq('id', userId)
+  const { error } = await supabase
+    .from('profiles')
+    .update({ ativo })
+    .eq('id', userId)
+
   if (error) return { error: error.message }
 
   revalidatePath('/usuarios')
