@@ -22,8 +22,7 @@ export default async function DashboardLayout({
 
   const profile = await getProfile()
   const userEmail = user.email ?? 'Utilizador'
-  const userName = profile?.nome_completo ?? user.user_metadata?.full_name ?? userEmail.split('@')[0]
-
+const userName = profile?.nome_completo ?? profile?.full_name ?? user.user_metadata?.full_name ?? userEmail.split('@')[0]
   return (
     <div className="min-h-screen bg-slate-50 flex">
       {/* Sidebar */}

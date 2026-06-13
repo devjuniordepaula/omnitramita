@@ -1,12 +1,11 @@
-// Tipos centrais do OmniTramita baseados no schema do banco de dados
-
 export type Orgao = {
   id: string
   nome: string
   cnpj: string | null
   cidade: string | null
   estado: string | null
-  criado_em: string
+  criado_em?: string
+  created_at?: string
 }
 
 export type Departamento = {
@@ -14,7 +13,7 @@ export type Departamento = {
   orgao_id: string
   nome: string
   descricao: string | null
-  criado_em: string
+  criado_em?: string
   orgaos?: Orgao
 }
 
@@ -23,13 +22,15 @@ export type Setor = {
   departamento_id: string
   nome: string
   descricao: string | null
-  criado_em: string
+  criado_em?: string
   departamentos?: Departamento
 }
 
 export type Profile = {
   id: string
-  nome_completo: string
+  full_name: string | null
+  nome_completo: string | null
+  email: string | null
   cargo: string | null
   matricula: string | null
   orgao_id: string | null
@@ -37,9 +38,11 @@ export type Profile = {
   can_view: boolean
   can_dispatch: boolean
   can_sign: boolean
-  ativo: boolean
-  criado_em: string
-  atualizado_em: string
+  ativo: boolean | null
+  criado_em?: string
+  atualizado_em?: string
+  created_at?: string
+  updated_at?: string
   orgaos?: Orgao
   profile_setores?: { setor_id: string; setores?: Setor }[]
 }
@@ -53,7 +56,7 @@ export type ExternalUser = {
   estado: string | null
   telefone: string | null
   email: string | null
-  criado_em: string
+  criado_em?: string
 }
 
 export type ExternalRequest = {
