@@ -1,44 +1,30 @@
-"use client"
-
+import { createClient } from '@/utils/supabase/server'
 import { DataTable } from "@/components/dashboard/data-table"
 import { columns, Processo } from "./columns"
 
-const data: Processo[] = [
-  {
-    id: "1",
-    title: "OFÍCIO Nº 123/2026",
-    type: "Ofício",
-    priority: "Urgente",
-    status: "A Distribuir",
-    created_at: "2026-05-02T10:00:00Z",
-  },
-  {
-    id: "2",
-    title: "PROCESSO LICITATÓRIO 001/26",
-    type: "Processo",
-    priority: "Alta",
-    status: "Em Análise",
-    created_at: "2026-05-01T14:30:00Z",
-  },
-  {
-    id: "3",
-    title: "CONTRATO DE SERVIÇOS",
-    type: "Contrato",
-    priority: "Normal",
-    status: "Assinatura",
-    created_at: "2026-04-28T09:15:00Z",
-  },
-  {
-    id: "4",
-    title: "RESPOSTA OFÍCIO 110/2026",
-    type: "Ofício",
-    priority: "Baixa",
-    status: "Despachado",
-    created_at: "2026-04-25T16:45:00Z",
-  },
-]
+async function getProcessos(): Promise<Processo[]> {
+  const supabase = await createClient()
 
-export default function ProcessosPage() {
+  const { data, error } = await supabase
+    .from('documents')
+    .select('id, title, type, priority, status, created_at')
+    .order('created_at', { ascending: false })
+
+  if (error || !data) return []
+
+  return data.map((doc) => ({
+    id: doc.id,
+    title: doc.title,
+    type: doc.type,
+    priority: doc.priority as Processo['priority'],
+    status: doc.status as Processo['status'],
+    created_at: doc.created_at,
+  }))
+}
+
+export default async function ProcessosPage() {
+  const data = await getProcessos()
+
   return (
     <div className="space-y-6">
       <div>
