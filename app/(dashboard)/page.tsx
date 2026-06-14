@@ -7,6 +7,7 @@ import { Inbox, AlertTriangle, Send, Hourglass } from "lucide-react"
 async function getDashboardData() {
   const supabase = await createClient()
 
+  // Buscar contagens em paralelo para performance
   const [
     { count: totalDistribuir },
     { count: totalAnalise },
@@ -14,11 +15,27 @@ async function getDashboardData() {
     { count: totalAssinatura },
     { data: recentEvents },
   ] = await Promise.all([
-    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('status', 'distribuir'),
-    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('status', 'analise'),
-    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('status', 'despachado'),
-    supabase.from('documents').select('*', { count: 'exact', head: true }).eq('status', 'assinatura'),
-    supabase.from('process_events').select('id, user_name, from_status, to_status, observation, created_at, document_id, documents(title)').order('created_at', { ascending: false }).limit(8),
+    supabase
+      .from('documents')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'distribuir'),
+    supabase
+      .from('documents')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'analise'),
+    supabase
+      .from('documents')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'despachado'),
+    supabase
+      .from('documents')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'assinatura'),
+    supabase
+      .from('process_events')
+      .select('id, user_name, from_status, to_status, observation, created_at, document_id, documents(title)')
+      .order('created_at', { ascending: false })
+      .limit(8),
   ])
 
   return {
@@ -31,7 +48,13 @@ async function getDashboardData() {
 }
 
 export default async function DashboardPage() {
-  const { totalDistribuir, totalAnalise, totalDespachados, totalAssinatura, recentEvents } = await getDashboardData()
+  const {
+    totalDistribuir,
+    totalAnalise,
+    totalDespachados,
+    totalAssinatura,
+    recentEvents,
+  } = await getDashboardData()
 
   return (
     <div className="space-y-6">
@@ -41,12 +64,38 @@ export default async function DashboardPage() {
           Acompanhe o fluxo de documentos e identifique gargalos em tempo real.
         </p>
       </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="A Distribuir" value={totalDistribuir} description="Documentos aguardando triagem" icon={Inbox} colorVariant="default" />
-        <StatCard title="Em Análise" value={totalAnalise} description="Documentos em andamento" icon={Hourglass} colorVariant="warning" />
-        <StatCard title="Aguardando Assinatura" value={totalAssinatura} description="Pendentes de aprovação" icon={AlertTriangle} colorVariant="danger" />
-        <StatCard title="Despachados" value={totalDespachados} description="Processos concluídos" icon={Send} colorVariant="success" />
+        <StatCard
+          title="A Distribuir"
+          value={totalDistribuir}
+          description="Documentos aguardando triagem"
+          icon={Inbox}
+          colorVariant="default"
+        />
+        <StatCard
+          title="Em Análise"
+          value={totalAnalise}
+          description="Documentos em andamento"
+          icon={Hourglass}
+          colorVariant="warning"
+        />
+        <StatCard
+          title="Aguardando Assinatura"
+          value={totalAssinatura}
+          description="Pendentes de aprovação"
+          icon={AlertTriangle}
+          colorVariant="danger"
+        />
+        <StatCard
+          title="Despachados"
+          value={totalDespachados}
+          description="Processos concluídos"
+          icon={Send}
+          colorVariant="success"
+        />
       </div>
+
       <div className="grid gap-4 md:grid-cols-1 xl:grid-cols-4 mt-8">
         <div className="col-span-1 xl:col-span-3 overflow-hidden">
           <KanbanBoard />
