@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { ExternalUserForm } from '@/components/solicitar/external-user-form'
 import { ProtocolRequestForm } from '@/components/solicitar/protocol-request-form'
-import { CheckCircle, Copy, Check, UserCheck, FileText, Send, Zap } from 'lucide-react'
+import { CheckCircle, Copy, Check, UserCheck, FileText, Send, Zap, QrCode, ExternalLink } from 'lucide-react'
 import type { Departamento, Setor } from '@/lib/types'
 
-// Etapas do stepper
 type Step = 'identificacao' | 'solicitacao' | 'confirmacao'
 
 const STEPS = [
@@ -20,11 +19,11 @@ export default function SolicitarPage() {
   const [step, setStep] = useState<Step>('identificacao')
   const [externalUserId, setExternalUserId] = useState('')
   const [trackingCode, setTrackingCode] = useState('')
+  const [trackingUrl, setTrackingUrl] = useState('')
   const [copied, setCopied] = useState(false)
   const [departamentos, setDepartamentos] = useState<Departamento[]>([])
   const [setores, setSetores] = useState<Setor[]>([])
 
-  // Carregar estrutura organizacional no lado do cliente
   useEffect(() => {
     const supabase = createClient()
     Promise.all([
@@ -35,6 +34,13 @@ export default function SolicitarPage() {
       setSetores((setoresRes.data ?? []) as Setor[])
     })
   }, [])
+
+  // Gera a URL de rastreamento quando o protocolo é criado (apenas no cliente)
+  useEffect(() => {
+    if (trackingCode && typeof window !== 'undefined') {
+      setTrackingUrl(`${window.location.origin}/rastrear?codigo=${trackingCode}`)
+    }
+  }, [trackingCode])
 
   const handleCopy = () => {
     navigator.clipboard.writeText(trackingCode)
@@ -169,6 +175,34 @@ export default function SolicitarPage() {
                 </button>
               </div>
 
+              {/* QRCode de rastreamento */}
+              {trackingUrl && (
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+                  <p className="text-xs text-slate-400 uppercase font-semibold tracking-wide flex items-center justify-center gap-1.5">
+                    <QrCode className="h-3.5 w-3.5" />
+                    Acompanhe pelo celular
+                  </p>
+                  <div className="flex justify-center">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(trackingUrl)}`}
+                      alt="QRCode para rastrear o protocolo"
+                      width={180}
+                      height={180}
+                      className="rounded-lg border border-slate-200 bg-white p-2"
+                    />
+                  </div>
+                  <a
+                    href={trackingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                  >
+                    Abrir página de rastreamento
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </div>
+              )}
+
               <p className="text-xs text-slate-400">
                 O seu protocolo foi encaminhado ao setor responsável. Em breve você receberá um retorno.
               </p>
@@ -179,6 +213,7 @@ export default function SolicitarPage() {
                   setStep('identificacao')
                   setExternalUserId('')
                   setTrackingCode('')
+                  setTrackingUrl('')
                 }}
                 className="w-full py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors"
               >
