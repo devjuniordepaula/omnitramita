@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
-import { Zap, Search, CheckCircle2, Clock, Inbox, AlertCircle } from 'lucide-react'
+import { Zap, Search, CheckCircle2, Clock, Inbox, AlertCircle, ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 
 type ExternalRequest = {
   id: string
@@ -20,7 +21,7 @@ const STEPS = [
 function getStepIndex(status: string) {
   if (status === 'pendente') return 0
   if (status === 'em_andamento') return 1
-  return 2 // assinado, concluido, despachado
+  return 2
 }
 
 function getStatusLabel(status: string) {
@@ -66,6 +67,16 @@ export default async function RastrearPage({
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center px-4 py-12">
       <div className="w-full max-w-md">
+
+        {/* Voltar */}
+        <Link
+          href="/solicitar"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors mb-6"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Voltar ao início
+        </Link>
+
         {/* Cabeçalho */}
         <div className="text-center mb-8">
           <div className="inline-flex p-2 bg-slate-900 rounded-lg mb-3">
@@ -96,7 +107,6 @@ export default async function RastrearPage({
           </div>
         </form>
 
-        {/* Resultado: não encontrado */}
         {notFound && (
           <div className="bg-white rounded-xl border border-red-100 shadow-sm p-6 text-center">
             <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
@@ -107,7 +117,6 @@ export default async function RastrearPage({
           </div>
         )}
 
-        {/* Resultado: encontrado */}
         {request && (
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
@@ -121,7 +130,6 @@ export default async function RastrearPage({
               )}
             </div>
 
-            {/* Stepper de status */}
             <div className="px-6 py-6">
               <div className="flex items-center justify-between">
                 {STEPS.map((step, index) => {
@@ -180,7 +188,6 @@ export default async function RastrearPage({
           </div>
         )}
 
-        {/* Estado inicial */}
         {!codigo && (
           <div className="text-center text-sm text-slate-400 mt-8">
             Digite o código do protocolo que você recebeu ao abrir sua solicitação.

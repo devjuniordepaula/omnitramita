@@ -41,7 +41,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/register') ||
     pathname.startsWith('/auth') ||
     pathname.startsWith('/solicitar') ||
-    pathname.startsWith('/rastrear')
+    pathname.startsWith('/rastrear') ||
+    pathname.startsWith('/reset-password')
 
   // Sem sessão tentando acessar rota privada → login
   if (!user && !isPublicRoute) {
